@@ -9,8 +9,8 @@ from pathlib import Path
 
 # Instantiate an s3 client object
 s3_client = boto3.client('s3',
-                         aws_access_key_id='AKIAZOGVM4TFYEYR2M4I',
-                         aws_secret_access_key='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')
+                         aws_access_key_id='AWS_ACCESS_KEY_ID',
+                         aws_secret_access_key='AWS_SECRET_ACCESS_KEY')
 
 
 def get_job_data() -> pd.DataFrame:
@@ -94,13 +94,15 @@ def get_job_data() -> pd.DataFrame:
 
 
 def write_to_s3(df: pd.DataFrame, bucket_name, path: Path) -> None:
-    file_name = f"{datetime.now().strftime('%Y-%m-%d')}"
-    csv_buffer = StringIO()
-    df.to_csv(csv_buffer, index=False)
-    csv_str = csv_buffer.getvalue()
-    print(csv_str)
-    s3_client.put_object(Bucket=bucket_name, Key=f'{path}/{file_name}', Body=csv_str)
-    print('Successfully written file to s3 bucket')
+    print(df)
+    print(df.shape)
+    # file_name = f"{datetime.now().strftime('%Y-%m-%d')}"
+    # csv_buffer = StringIO()
+    # df.to_csv(csv_buffer, index=False)
+    # csv_str = csv_buffer.getvalue()
+    # print(csv_str)
+    # s3_client.put_object(Bucket=bucket_name, Key=f'{path}/{file_name}', Body=csv_str)
+    # print('Successfully written file to s3 bucket')
 
 
 def main():

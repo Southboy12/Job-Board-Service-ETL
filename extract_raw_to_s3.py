@@ -3,6 +3,7 @@ import requests
 import os
 import boto3, dotenv, json
 from datetime import datetime
+from pathlib import Path
 
 
 # Load the environment variables
@@ -15,7 +16,28 @@ s3_client = boto3.client('s3',
 
 
 # Define a function to extract data from the JSearch API
-def extract_data(folder):
+def extract_data(folder: str) -> Path:
+    """
+     Extracts job search data from an external API and saves it to a local and S3 bucket file.
+
+    Args:
+        folder (str): The name of the folder in which to store the local file.
+
+    Returns:
+        Path.
+
+    Raises:
+        None.
+
+    This function queries an external API for job search data, with different parameters for job roles and locations, and saves the responses to temporary files on disk. It then merges the temporary files into a single JSON-formatted string and writes it to a local file named "merged-data.json" in the specified folder. Finally, the merged data is uploaded to an S3 bucket named "jobsearch-data", with a key composed of the specified folder name and the current date in the format "folder/YYYY-MM-DD.json".
+
+    The function requires the following environment variables to be set in a local .env file:
+    - AWS_ACCESS_KEY_ID: The AWS access key ID for the user with S3 write permissions.
+    - AWS_SECRET_ACCESS_KEY: The AWS secret access key for the user with S3 write permissions.
+    """
+
+
+
     # Define the API endpoint and parameters
     url = "https://jsearch.p.rapidapi.com/search"
 
@@ -79,6 +101,7 @@ def extract_data(folder):
                             Body=json.dumps(merged_data))
 
     print('Success')
+    return aws_path
 
 
 # Define the main function
@@ -87,7 +110,7 @@ def main():
     folder = 'raw_data'
 
     # Extract the data from the JSearch API
-    extract_data(folder)
+    path = extract_data(folder)
 
 
 # If this is the main script, call the main function

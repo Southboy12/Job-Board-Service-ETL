@@ -42,7 +42,7 @@ def get_job_data() -> pd.DataFrame:
     # Define the headers for the job search API
     headers = {
 	"content-type": "application/octet-stream",
-	"X-RapidAPI-Key": "cc2a704a2cmsh1034fb96de58e7bp15f6abjsn9bde769bf405",
+	"X-RapidAPI-Key": os.getenv('X-RAPIDAPI-KEY '),
 	"X-RapidAPI-Host": "jsearch.p.rapidapi.com"
     }
 
@@ -97,6 +97,7 @@ def write_to_s3(df: pd.DataFrame, bucket_name: str, path: Path) -> None:
     df.to_csv(csv_file_name, index=False)
     s3_client.upload_file(csv_file_name, bucket_name, csv_file_name)
     print('successful')
+
 
 def main():
     bucket_name = 'jobsearch-data'

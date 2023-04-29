@@ -42,7 +42,7 @@ def get_job_data() -> pd.DataFrame:
     # Define the headers for the job search API
     headers = {
 	"content-type": "application/octet-stream",
-	"X-RapidAPI-Key": os.getenv('X-RAPIDAPI-KEY '),
+	"X-RapidAPI-Key": os.getenv('X-RAPIDAPI-KEY'),
 	"X-RapidAPI-Host": "jsearch.p.rapidapi.com"
     }
 
@@ -90,20 +90,19 @@ def get_job_data() -> pd.DataFrame:
     return df
 
 
-def write_to_s3(df: pd.DataFrame, bucket_name: str, path: Path) -> None:
-    print(df.shape)
-    file_name = f"{datetime.now().strftime('%Y-%m-%d')}.csv"
-    csv_file_name = f'{path}/{file_name}'
-    df.to_csv(csv_file_name, index=False)
-    s3_client.upload_file(csv_file_name, bucket_name, csv_file_name)
+def write_to_s3(df: pd.DataFrame, bucket_name: str, raw_file_name: Path) -> None:
+    df.to_csv(raw_file_name, index=False)
+    s3_client.upload_file(raw_file_name, bucket_name, raw_file_name)
     print('successful')
 
 
 def main():
     bucket_name = 'jobsearch-data'
-    path = 'job_data'
+    path = 'raw_job_data'
+    file_name = f"{datetime.now().strftime('%Y-%m-%d')}.csv"
+    raw_file_name = f'{path}/{file_name}'
     df = get_job_data()
-    write_to_s3(df, bucket_name, path)
+    write_to_s3(df, bucket_name, raw_file_name)
 
 if __name__ == '__main__':
     main()

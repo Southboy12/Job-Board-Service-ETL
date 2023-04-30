@@ -93,7 +93,7 @@ def extract_data() -> Path:
     current_date = datetime.now().strftime('%Y-%m-%d')
 
     # Define the folder where the data will be saved
-    folder = 'raw_data'
+    folder = 'raw_data_test'
 
     # Create the path to the file in S3
     aws_path = f'{folder}/{current_date}'

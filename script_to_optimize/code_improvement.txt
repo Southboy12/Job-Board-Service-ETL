@@ -1,0 +1,1 @@
+Add a try and except when fetching data from the api and also check if response is 200

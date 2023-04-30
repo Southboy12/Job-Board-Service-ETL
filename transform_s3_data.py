@@ -4,6 +4,7 @@ from datetime import datetime
 from io import StringIO
 import io
 from pathlib import Path
+from prefect import task, flow
 
 
 # Instantiate an s3 client object
@@ -12,7 +13,7 @@ s3_client = boto3.client('s3',
                          aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
                          aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'))
 
-
+@task(log_prints=True)
 def read_csv_from_s3() -> pd.DataFrame:
     """
     The function reads a CSV file from an S3 bucket.
@@ -35,14 +36,14 @@ def read_csv_from_s3() -> pd.DataFrame:
     df = pd.read_csv(io.BytesIO(obj['Body'].read()))
     return df
 
-
+@task(log_prints=True)
 def transform(df: pd.DataFrame) -> pd.DataFrame:   
 
     df['job_posted_at_timestamp'] = pd.to_datetime(df['job_posted_at_timestamp'], unit='s')
     df['job_posted_at_timestamp'] = df.job_posted_at_timestamp.sort_values(ascending=True)
     return df
 
-
+@task(log_prints=True)
 def write_transformed_to_s3(trans_df: pd.DataFrame) -> Path:
     bucket_name = 'jobsearch-data'
     current_date = f"{datetime.now().strftime('%Y-%m-%d')}.csv"
@@ -54,7 +55,7 @@ def write_transformed_to_s3(trans_df: pd.DataFrame) -> Path:
     return trans_key_name
 
 
-
+@flow(log_prints=True)
 def main():
     df = read_csv_from_s3()
     trans_df = transform(df)

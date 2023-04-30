@@ -5,11 +5,14 @@ from dotenv import dotenv_values
 import psycopg2
 import pandas as pd
 from datetime import datetime
+from prefect import flow, task
+
 
 
 config = dotenv_values('.env')
 iam_role = config.get('IAM_ROLE')
 
+#@task(log_prints=True)
 def get_redshift_connection():
     #iam_role = config.get('IAM_ROLE')
     user=config.get('USER')
@@ -20,6 +23,7 @@ def get_redshift_connection():
     conn = psycopg2.connect(f'postgresql://{user}:{password}@{host}:{port}/{database_name}')
     return conn
 
+#@task(log_prints=True)
 def execute_sql(sql_query, conn):
     conn = get_redshift_connection()
     cur = conn.cursor() # Creating a cursor object for executing SQL query
@@ -30,6 +34,7 @@ def execute_sql(sql_query, conn):
     conn.close() # Close connection
     print('Connection to database closed')
 
+@task(log_prints=True)
 def generate_schema(df: pd.DataFrame) -> str:
     table_name = 'job_data'
     create_table_statement = f'CREATE TABLE IF NOT EXISTS {table_name}(\n'
@@ -60,6 +65,7 @@ def generate_schema(df: pd.DataFrame) -> str:
     output_query = create_table_statement + column_type_query
     return output_query
 
+@task(log_prints=True)
 def load_to_redshift():
     table_name = 'job_data'
     trans_folder = 'transformed_job_data'
@@ -78,8 +84,8 @@ def load_to_redshift():
     execute_sql(copy_query, conn)
     print('Data successfully loaded to Redshift')
 
-
-def main():
+@flow(log_prints=True)
+def etl_parent_flow():
     df = get_job_data()
     write_to_s3(df)
     s3_df = read_csv_from_s3()
@@ -92,4 +98,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    etl_parent_flow()

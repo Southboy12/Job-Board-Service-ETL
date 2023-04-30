@@ -4,6 +4,7 @@ import boto3, os, dotenv
 from datetime import datetime
 from io import StringIO
 from pathlib import Path
+from prefect import flow, task
 
 
 
@@ -14,7 +15,7 @@ s3_client = boto3.client('s3',
                          aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
                          aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'))
 
-
+@task(log_prints=True, retries=3)
 def get_job_data() -> pd.DataFrame:
     """
     The function sends request, checks if the response is ok, 
@@ -33,11 +34,11 @@ def get_job_data() -> pd.DataFrame:
     # Define the query parameters for the job search API
     query_list = [
             {"query":"Data Engineer in USA ", "page":"1", "num_pages":"1", "date_posted":"today"},
-            {"query":"Data Engineer in UK ", "page":"1", "num_pages":"1", "date_posted":"today"},
-            {"query":"Data Engineer in Canada ", "page":"1", "num_pages":"1", "date_posted":"today"},
-            {"query":"Data Analyst in USA ", "page":"1", "num_pages":"1", "date_posted":"today"},
-            {"query":"Data Analyst in UK ", "page":"1", "num_pages":"1", "date_posted":"today"},
-            {"query":"Data Analyst in Canada ", "page":"1", "num_pages":"1", "date_posted":"today"}]
+            {"query":"Data Engineer in UK ", "page":"1", "num_pages":"1", "date_posted":"today"}]
+            # {"query":"Data Engineer in Canada ", "page":"1", "num_pages":"1", "date_posted":"today"},
+            # {"query":"Data Analyst in USA ", "page":"1", "num_pages":"1", "date_posted":"today"},
+            # {"query":"Data Analyst in UK ", "page":"1", "num_pages":"1", "date_posted":"today"},
+            # {"query":"Data Analyst in Canada ", "page":"1", "num_pages":"1", "date_posted":"today"}]
 
     # Define the headers for the job search API
     headers = {
@@ -90,6 +91,7 @@ def get_job_data() -> pd.DataFrame:
     return df
 
 
+@task(log_prints=True)
 def write_to_s3(df: pd.DataFrame) -> None:
     bucket_name = 'jobsearch-data'
     path = 'raw_job_data'
@@ -99,7 +101,7 @@ def write_to_s3(df: pd.DataFrame) -> None:
     s3_client.upload_file(raw_file_name, bucket_name, raw_file_name)
     print('successful')
 
-
+@flow(log_prints=True)
 def main():
     df = get_job_data()
     write_to_s3(df)

@@ -16,7 +16,7 @@ def read_raw_data_from_s3():
     current_date = datetime.now().strftime('%Y-%m-%d')
 
     # Define the folder where the data will be saved
-    folder = 'raw_data'
+    folder = 'raw_data_test'
 
     # Create the path to the file in S3
     aws_path = f'{folder}/{current_date}'
@@ -30,18 +30,14 @@ def read_raw_data_from_s3():
     obj = s3_client.get_object(Bucket=bucket_name, Key=key)
 
     data = json.loads(obj['Body'].read())
-
+    print(type(data))
     return data
 
 def extract_records(data):
+    print(type(data))
+    
 
-    with open(data, 'r') as f:
-        dictionary = json.load(f)
-
-    for item in list(dictionary.values())[3]:
-        i=0
-        print(i)
-        i+=1
+        
 
     # values = []
     # for key, value in dictionary.items():

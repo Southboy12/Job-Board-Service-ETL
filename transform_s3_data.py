@@ -39,7 +39,7 @@ def read_csv_from_s3() -> pd.DataFrame:
 def transform(df: pd.DataFrame) -> pd.DataFrame:   
 
     df['job_posted_at_timestamp'] = pd.to_datetime(df['job_posted_at_timestamp'], unit='s')
-    df.job_posted_at_timestamp.sort_values(ascending=True, inplace=True)
+    df['job_posted_at_timestamp'] = df.job_posted_at_timestamp.sort_values(ascending=True)
     return df
 
 

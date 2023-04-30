@@ -84,25 +84,25 @@ def get_job_data() -> pd.DataFrame:
     columns = ['job_id', 'employer_names', 'employer_website', 'job_employment_type', 'job_title', 'job_city', 'job_country', 'job_apply_link', 'employer_company_type', 'job_description', 'job_posted_at_timestamp']
     # Create a DataFrame from the job data
     df = pd.DataFrame(all_jobs, columns=columns)
-    print(df.shape)
+    print(df.job_posted_at_timestamp[2])
     # Print a success message
     print('Successfully written to a DataFrame')
     return df
 
 
-def write_to_s3(df: pd.DataFrame, bucket_name: str, raw_file_name: Path) -> None:
+def write_to_s3(df: pd.DataFrame) -> None:
+    bucket_name = 'jobsearch-data'
+    path = 'raw_job_data'
+    file_name = f"{datetime.now().strftime('%Y-%m-%d')}.csv"
+    raw_file_name = f'{path}/{file_name}'
     df.to_csv(raw_file_name, index=False)
     s3_client.upload_file(raw_file_name, bucket_name, raw_file_name)
     print('successful')
 
 
 def main():
-    bucket_name = 'jobsearch-data'
-    path = 'raw_job_data'
-    file_name = f"{datetime.now().strftime('%Y-%m-%d')}.csv"
-    raw_file_name = f'{path}/{file_name}'
     df = get_job_data()
-    write_to_s3(df, bucket_name, raw_file_name)
+    write_to_s3(df)
 
 if __name__ == '__main__':
     main()

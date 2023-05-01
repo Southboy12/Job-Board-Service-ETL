@@ -70,10 +70,59 @@ localhost:4200
 prefect agent start --work-queue "<work-queue_name>"
 ```
 
-## **Uning Airflow**
+## **Using Airflow**
 
 To test each dag task
 1. Run astro dev start
 2. Get <container id> for the websever by running <docker ps>
 2. Run docker exec -it <container id> bash inside a terminal
-3. In the bash prompt, type airflow tasks test <dag name> <task id> <backward date: 2023-03-01>
+3. In the bash prompt, type 
+```python copyable
+airflow tasks test <dag name> <task id> <backward date:2023-03-01>
+```
+
+                      +---------------+
+                      |               |
+                      |    Source     |
+                      |  (RapidAPI)   |         |
+                      |               |
+                      +-------+-------+
+                              |
+                     +--------v--------+
+                     |                 |
+                     |      Local   |
+                     |                 |
+                     +--------+--------+
+                              |
+                     +--------v--------+
+                     |                 |
+                     |  Transform Data |
+                     |                 |
+                     +--------+--------+
+                              |
+                     +--------v--------+
+                     |                 |
+                     | Write to S3     |
+                     |   (Source)      |
+                     +--------+--------+
+                              |
+                     +--------v--------+
+                     |                 |
+                     | Copy to         |
+                     | Transformed S3  |
+                     |                 |
+                     +--------+--------+
+                              |
+                     +--------v--------+
+                     |                 |
+                     | Load to Redshift|
+                     |                 |
+                     +--------+--------+
+                              |
+                              |
+                      +-------v-------+
+                      |               |
+                      |   Redshift    |
+                      |               |
+                      +---------------+
+

@@ -117,36 +117,3 @@ To test each dag task
 airflow tasks test <dag name> <task id> <backward date:2023-03-01>
 ```
 
-                      +---------------+
-                      |               |
-                      |    Source     |
-                      |  (RapidAPI)   |        
-                      |    (Json)     |
-                      +-------+-------+
-                              |Extract
-                     +--------v--------+
-                     |                 |
-                     |      Local      |
-                     |     Storage     |
-                     +--------+--------+
-                              |
-                     +--------v--------+
-                     |                 |
-                     |    S3 Bucket    |
-                     |   (Raw Data)    |
-                     +--------+--------+
-                              |
-                     +--------v--------+
-                     |     S3 Bucket   |
-                     |   Transformed   |    
-                     |      Data       |
-                     +--------+--------+
-                              |
-                     +--------v--------+
-                     |                 |
-                     |       AWS       |
-                     |     Redshift    |
-                     |                 |
-                     +--------+--------+
-                              
-

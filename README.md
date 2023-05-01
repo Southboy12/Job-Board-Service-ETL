@@ -15,6 +15,42 @@
 * Dotenv
 * Prefect
 
+
+## **Pipeline Architecture**
+
+
+                      +---------------+
+                      |               |
+                      |    Source     |
+                      |  (RapidAPI)   |        
+                      |    (Json)     |
+                      +-------+-------+
+                              |Extract
+                     +--------v--------+
+                     |                 |
+                     |      Local      |
+                     |     Storage     |
+                     +--------+--------+
+                              |
+                     +--------v--------+
+                     |                 |
+                     |    S3 Bucket    |
+                     |   (Raw Data)    |
+                     +--------+--------+
+                              |
+                     +--------v--------+
+                     |     S3 Bucket   |
+                     |   Transformed   |    
+                     |      Data       |
+                     +--------+--------+
+                              |
+                     +--------v--------+
+                     |                 |
+                     |       AWS       |
+                     |     Redshift    |
+                     |                 |
+                     +--------+--------+
+
 ## **Setup**
 To run this project, you need to have Python installed on your machine. You can download the latest version of Python from the official Python website. You also need to have an AWS account and access to an S3 bucket abd Redshift.
 
@@ -84,45 +120,33 @@ airflow tasks test <dag name> <task id> <backward date:2023-03-01>
                       +---------------+
                       |               |
                       |    Source     |
-                      |  (RapidAPI)   |         |
-                      |               |
+                      |  (RapidAPI)   |        
+                      |    (Json)     |
                       +-------+-------+
-                              |
+                              |Extract
                      +--------v--------+
                      |                 |
-                     |      Local   |
-                     |                 |
+                     |      Local      |
+                     |     Storage     |
                      +--------+--------+
                               |
                      +--------v--------+
                      |                 |
-                     |  Transform Data |
-                     |                 |
+                     |    S3 Bucket    |
+                     |   (Raw Data)    |
+                     +--------+--------+
+                              |
+                     +--------v--------+
+                     |     S3 Bucket   |
+                     |   Transformed   |    
+                     |      Data       |
                      +--------+--------+
                               |
                      +--------v--------+
                      |                 |
-                     | Write to S3     |
-                     |   (Source)      |
-                     +--------+--------+
-                              |
-                     +--------v--------+
-                     |                 |
-                     | Copy to         |
-                     | Transformed S3  |
+                     |       AWS       |
+                     |     Redshift    |
                      |                 |
                      +--------+--------+
-                              |
-                     +--------v--------+
-                     |                 |
-                     | Load to Redshift|
-                     |                 |
-                     +--------+--------+
-                              |
-                              |
-                      +-------v-------+
-                      |               |
-                      |   Redshift    |
-                      |               |
-                      +---------------+
+                              
 

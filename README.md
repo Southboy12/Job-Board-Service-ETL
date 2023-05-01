@@ -19,37 +19,37 @@
 ## **Pipeline Architecture**
 
 
-                      +---------------+
-                      |               |
-                      |    Source     |
-                      |  (RapidAPI)   |        
-                      |    (Json)     |
-                      +-------+-------+
-                              |Extract
-                     +--------v--------+
-                     |                 |
-                     |      Local      |
-                     |     Storage     |
-                     +--------+--------+
-                              |
-                     +--------v--------+
-                     |                 |
-                     |    S3 Bucket    |
-                     |   (Raw Data)    |
-                     +--------+--------+
-                              |
-                     +--------v--------+
-                     |     S3 Bucket   |
-                     |   Transformed   |    
-                     |      Data       |
-                     +--------+--------+
-                              |
-                     +--------v--------+
-                     |                 |
-                     |       AWS       |
-                     |     Redshift    |
-                     |                 |
-                     +--------+--------+
+                      +---------------+		|
+                      |               |		|
+                      |    Source     |		|
+                      |  (RapidAPI)   |        	|
+                      |               |		|
+                      +-------+-------+		|
+                              |			|
+                     +--------v--------+	|		
+                     |                 |	|
+                     |      Local      |	|
+                     |     Storage     |	|
+                     +--------+--------+	|
+                              |			|
+                     +--------v--------+	|
+                     |                 |	|Prefect Orchestraction Workflow
+                     |    S3 Bucket    |	|
+                     |   (Raw Data)    |	|
+                     +--------+--------+	|
+                              |			|
+                     +--------v--------+	|
+                     |     S3 Bucket   |	|
+                     |   Transformed   |    	|
+                     |      Data       |	|
+                     +--------+--------+	|
+                              |			|
+                     +--------v--------+	|
+                     |                 |	|
+                     |       AWS       |	|
+                     |     Redshift    |	|
+                     |                 |	|
+                     +--------+--------+	V
 
 ## **Setup**
 To run this project, you need to have Python installed on your machine. You can download the latest version of Python from the official Python website. You also need to have an AWS account and access to an S3 bucket abd Redshift.
